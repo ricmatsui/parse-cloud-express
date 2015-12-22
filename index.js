@@ -40,15 +40,20 @@ function inflateParseObject(req, res, next) {
   } else {
     req.object = Parse.Object.fromJSON(req.body.object);
   }
+
+  req.objectExisted = !!req.body.original;
+
   next();
 }
 
 // Middleware to create the .success and .error methods expected by a Cloud Code function
 function addParseResponseMethods(req, res, next) {
   res.success = function(data) {
+    logResponse('success', req, data);
     successResponse(res, data);
   };
   res.error = function(data) {
+    logResponse('error', req, data);
     errorResponse(res, data);
   };
   next();
@@ -73,6 +78,20 @@ function inflateParseUser(req, res, next) {
 }
 
 
+var logResponse = function(type, req, data) {
+  var logInfo = {
+    type: type,
+    req: req.body,
+    data: data
+  };
+
+  if (!process.env.PARSE_CLOUD_EXPRESS_DEBUG) {
+    logInfo = JSON.stringify(logInfo);
+  }
+
+  console.log('cloud ' + type, logInfo);
+}
+
 var successResponse = function(res, data) {
   data = data || true;
   res.status(200).send({ "success" : data });
@@ -84,6 +103,7 @@ var errorResponse = function(res, message) {
 }
 
 var emptyResponse = function(req, res, next) {
+  logResponse('empty', req);
   res.status(200).send({});
   next();
 };

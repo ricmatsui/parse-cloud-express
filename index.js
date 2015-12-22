@@ -80,6 +80,7 @@ function inflateParseUser(req, res, next) {
 
 var logResponse = function(type, req, data) {
   var logInfo = {
+    source: 'parse-cloud-express',
     type: type,
     req: req.body,
     data: data
@@ -89,7 +90,7 @@ var logResponse = function(type, req, data) {
     logInfo = JSON.stringify(logInfo);
   }
 
-  console.log('cloud ' + type, logInfo);
+  console.log(logInfo);
 }
 
 var successResponse = function(res, data) {

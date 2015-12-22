@@ -56,6 +56,9 @@ function addParseResponseMethods(req, res, next) {
     logResponse('error', req, data);
     errorResponse(res, data);
   };
+  req.setAfterResult = function(data) {
+    logResponse('result', req, data);
+  };
   next();
 }
 
@@ -104,7 +107,6 @@ var errorResponse = function(res, message) {
 }
 
 var emptyResponse = function(req, res, next) {
-  logResponse('empty', req);
   res.status(200).send({});
   next();
 };
